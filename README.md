@@ -72,7 +72,7 @@ Your public key has been saved in C:\Users\YourUsername\.ssh\examplekey.pub.
 
 
 ### Install Ansible and  lemmy
-[Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/index.html)
+[Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible)
 1.  Copy your SSH keys (Both .pub and private w/ no file extension) from ```~/.ssh``` to the WSL2 VM, ```\\wsl.localhost\Ubuntu-22.04\home\user\.ssh```
 2.  SSH into your Azure VM via this command using the Public IP address output in the previous section:
 ``` bash
