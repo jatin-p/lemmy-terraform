@@ -47,17 +47,17 @@ Follow these steps to generate the SSH key pair, provision the Azure VM, and run
 
 2. Use the ssh-keygen command to generate the SSH key pair. Enter the following command:
 ```bash
-ssh-keygen -t rsa -b 2048
+ssh-keygen -t rsa -b 4096
 ```
 3. Specify the file name and path to save the key pair. For example:
 ```bash
-C:\Users\YourUsername\.ssh\lemmyazurekey
+C:\Users\YourUsername\.ssh\examplekey
 ```
 4.You will be prompted to enter a passphrase. You can either choose to enter a passphrase or leave it blank for an unprotected key.
 5.  Key pair will generate a public key and private key
 ```bash
-Your identification has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.
-Your public key has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.pub.
+Your identification has been saved in C:\Users\YourUsername\.ssh\examplekey.
+Your public key has been saved in C:\Users\YourUsername\.ssh\examplekey.pub.
 ```
 
 ### Provision infrastructure using Terraform
@@ -78,7 +78,7 @@ Your public key has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.pub.
 ``` bash
 ssh -i  ~/.ssh/lemmyazurekey azureuser@1.2.3.4
 ```
-4. Follow steps in the [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo
+4. Follow steps in the [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo to install  lemmy
 
 ## Clean Up
 
@@ -90,7 +90,8 @@ terraform destroy
 
 Confirm the destruction when prompted.
 
-**Note:** This action will permanently delete all resources provisioned by this project. THERE IS  NO UNDO
+**Note:** This action will permanently delete all resources provisioned by this project. 
+***THERE IS NO UNDO***
 
 ## Contributions
 
