@@ -17,7 +17,8 @@ Before you begin, ensure that you have the following prerequisites installed:
  winget install Microsoft.AzureCLI
  winget install Hashicorp.Terraform
 ```
- 
+Log into Azure by following the [guide here](https://learn.microsoft.com/en-us/cli/azure/get-started-with-azure-cli)
+
 Ansible was installed in WSL2 (Ubuntu 22.04 LTS)  via python pip and the SSH keys were copied from ~/.ssh/ to WSL2 in order to log into Azure instance and follow [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo to install lemmy
  
  ## Project Structure
