@@ -97,4 +97,4 @@ Contributions to this Terraform project are welcome. If you find any issues or h
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [GNU GPL v3 License]([LICENSE](https://github.com/jatin-p/lemmy-terraform/blob/main/LICENSE)).
