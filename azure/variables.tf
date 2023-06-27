@@ -13,7 +13,7 @@ variable "resource_group_name_prefix" {
 variable "vm_size" {
   type        = string
   description = "Size the the Virtual machine being deployed."
-  default = "Standard_B2s"
+  default = "Standard_B1s"
 }
 
 variable "network_security_rules" {
