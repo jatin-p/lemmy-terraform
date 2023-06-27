@@ -13,12 +13,12 @@ Before you begin, ensure that you have the following prerequisites installed:
 - Ansible: [Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/index.html)
 
  Terraform and Azure CLI were installed via following commands:
- '''bash
+```bash
  winget install Microsoft.AzureCLI
  winget install Hashicorp.Terraform
- '''
+```
  
- Ansible was installed in WSL2 (Ubuntu 22.04 LTS) and the SSH keys were copied from ~/.ssh/ to WSL2 in order to run lemmy-ansible playbook 
+Ansible was installed in WSL2 (Ubuntu 22.04 LTS)  via python pip and the SSH keys were copied from ~/.ssh/ to WSL2 in order to log into Azure instance and follow [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo to install lemmy
  
  ## Project Structure
 
@@ -45,19 +45,19 @@ Follow these steps to generate the SSH key pair, provision the Azure VM, and run
 1. Open the PowerShell terminal on your Windows machine.
 
 2. Use the ssh-keygen command to generate the SSH key pair. Enter the following command:
-'''bash
+```bash
 ssh-keygen -t rsa -b 2048
-'''
+```
 3. Specify the file name and path to save the key pair. For example:
-'''bash
+```bash
 C:\Users\YourUsername\.ssh\lemmyazurekey
-'''
+```
 4.You will be prompted to enter a passphrase. You can either choose to enter a passphrase or leave it blank for an unprotected key.
 5.  Key pair will generate a public key and private key
-''bash
+```bash
 Your identification has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.
 Your public key has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.pub.
-'''
+```
 
 ### Provision infrastructure using Terraform
 
@@ -72,11 +72,11 @@ Your public key has been saved in C:\Users\YourUsername\.ssh\lemmyazurekey.pub.
 
 ### Install Ansible and  lemmy
 [Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/index.html)
-1.  Copy your SSH keys from ~/.ssh to the WSL2 VM, '''\\wsl.localhost\Ubuntu-22.04\home\user\.ssh'''
-2.  SSH into your  Azure VM via this command using the Public IP address output in the previous section:
-'''bash
+1.  Copy your SSH keys (Both .pub and private w/ no file extension) from ```~/.ssh``` to the WSL2 VM, ```\\wsl.localhost\Ubuntu-22.04\home\user\.ssh```
+2.  SSH into your Azure VM via this command using the Public IP address output in the previous section:
+``` bash
 ssh -i  ~/.ssh/lemmyazurekey azureuser@1.2.3.4
-'''
+```
 4. Follow steps in the [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo
 
 ## Clean Up
