@@ -1,6 +1,6 @@
 # lemmy-terraform
  
-# Terraform Project - Azure Provisioning and Ansible setup
+# Terraform Project - Cloud Provisioning and Ansible setup
 
 This Terraform project allows you to provision a single virtual machine (VM) in Azure, generate an SSH key pair, and then run an Ansible script on the provisioned VM.
 
