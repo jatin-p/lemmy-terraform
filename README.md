@@ -79,12 +79,39 @@ Your public key has been saved in C:\Users\YourUsername\.ssh\examplekey.pub.
 ssh -i  ~/.ssh/lemmyazurekey azureuser@1.2.3.4
 ```
 4. Follow steps in the [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo to install  lemmy
-5. ***To use your ssh key in your ansible playbook, add the following line to the top of your playbook file between "gather_facts:" & "pre_tasks"***
+
+### lemmy-ansible configuration tips
+- To use your ssh key in your ansible playbook, add the following line to the top of your playbook file between "gather_facts:" & "pre_tasks"
 ```bash
   vars:
     ansible_ssh_private_key_file: ~/.ssh/lemmyazurekey
 ```
+- Modify the hosts file after copying from "inventory/hosts" to use your VM's public IP address or domain (after you create a DNS record pointing to your instance)
+```bash
+azureuser@<ipaddress or domain>  domain=<domain>  letsencrypt_contact_email= example@email.com
+```
+- customPostgresql.conf is by default assuming your VM has higher specs than the free tier specs so use below to replace the settings in order opimize performance
+```bash
+# DB Version: 15
+# OS Type: linux
+# DB Type: web
+# Total Memory (RAM): 1 GB
+# CPUs num: 1
+# Data Storage: ssd
 
+max_connections = 200
+shared_buffers = 256MB
+effective_cache_size = 768MB
+maintenance_work_mem = 64MB
+checkpoint_completion_target = 0.9
+wal_buffers = 7864kB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 655kB
+min_wal_size = 1GB
+max_wal_size = 4GB
+```
 ## Clean Up
 
 To clean up and remove the provisioned Azure resources, run the following command:
