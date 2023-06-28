@@ -79,6 +79,11 @@ Your public key has been saved in C:\Users\YourUsername\.ssh\examplekey.pub.
 ssh -i  ~/.ssh/lemmyazurekey azureuser@1.2.3.4
 ```
 4. Follow steps in the [lemmy-ansible](https://github.com/LemmyNet/lemmy-ansible) repo to install  lemmy
+5. *** To use your ssh key in your ansible playbook, add the following line to the top of your playbook file between "gather_facts:" & "pre_tasks" ***
+```bash
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/lemmyazurekey
+```
 
 ## Clean Up
 
