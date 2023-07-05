@@ -1,3 +1,6 @@
+# These two resources along with locals block help generate a random bucket name with prefix
+# defined in variables.tf comment out these 3 blocks and replace with bucket string if you have
+# existing bucket you'd like to use
 resource "random_pet" "s3_name" {
   prefix = var.s3_bucket_name_prefix
 }

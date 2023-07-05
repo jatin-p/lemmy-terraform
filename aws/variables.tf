@@ -12,7 +12,7 @@ variable "s3_bucket_name_prefix" {
 
 variable "key_pair_name" {
   type    = string
-  default = "demokeypair"
+  default = "examplekey"
 }
 
 variable "vm_size" {

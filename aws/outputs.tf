@@ -1,4 +1,4 @@
-output "s3_bucketname_name" {
+output "s3_bucketname" {
   value = aws_s3_bucket.s3.bucket_domain_name
 }
 
