@@ -12,7 +12,7 @@ variable "s3_bucket_name_prefix" {
 
 variable "key_pair_name" {
   type    = string
-  default = "examplekey"
+  default = "awskey"
 }
 
 variable "vm_size" {
@@ -67,15 +67,15 @@ variable "network_security_rules" {
     "outbound" = {
       description = "outbound all"
       type        = "egress"
-      protocol    = "tcp"
+      protocol    = "-1"
       cidr_blocks = [
         "0.0.0.0/0",
       ]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
-      from_port        = 80
-      to_port          = 80
+      from_port        = 0
+      to_port          = 0
       self             = false
     },
   }
