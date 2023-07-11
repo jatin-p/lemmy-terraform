@@ -1,6 +1,6 @@
-output "s3_bucketname" {
-  value = aws_s3_bucket.s3.bucket_domain_name
-}
+# output "s3_bucketname" {
+#   value = aws_s3_bucket.s3.bucket_domain_name
+# }
 
 # Output the public IP address of the instance
 output "public_ip" {
@@ -26,7 +26,7 @@ output "my_ip" {
 }
 
 # # Uncomment to display SSH Key along with stated resources in provders.tf and main.tf
-output "tls_private_key" {
-  value     = tls_private_key.demo_key.private_key_pem
-  sensitive = true
-}
+# output "tls_private_key" {
+#   value     = tls_private_key.demo_key.private_key_pem
+#   sensitive = true
+# }

@@ -1,58 +1,23 @@
-# These two resources along with locals block help generate a random bucket name with prefix
-# defined in variables.tf comment out these 3 blocks and replace with bucket string if you have
-# existing bucket you'd like to use
-resource "random_pet" "s3_name" {
-  prefix = var.s3_bucket_name_prefix
-}
-
-resource "random_id" "unique_id" {
-  byte_length = 2
-}
-
-locals {
-  bucket_prefix = "${random_pet.s3_name.id}-${random_id.unique_id.hex}"
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/s3_bucket
-resource "aws_s3_bucket" "s3" {
-  bucket = "${local.bucket_prefix}"
-}
-
-#  https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/s3_bucket_ownership_controls
-resource "aws_s3_bucket_ownership_controls" "s3ctls" {
-  bucket = aws_s3_bucket.s3.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/s3_bucket_acl
-resource "aws_s3_bucket_acl" "s3-acl" {
-  depends_on = [aws_s3_bucket_ownership_controls.s3ctls]
-  bucket = aws_s3_bucket.s3.id
-  acl = "private"
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/vpc
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/vpc
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
-  tags       = { "Name" = "S3 bucket ACL (Managed by Terraform)" }
+  tags       = { "Name" = "VPC (Managed by Terraform)" }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/internet_gateway
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/internet_gateway
 resource "aws_internet_gateway" "inetgw" {
   vpc_id = aws_vpc.vpc.id
   tags   = { "Name" = "Internet Gateway (Managed by Terraform)" }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/subnet
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/subnet
 resource "aws_subnet" "subnet" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.1.0/24"
   tags       = { "Name" = "Subnet (Managed by Terraform)" }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/route_table
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/route_table
 resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.vpc.id
 
@@ -60,20 +25,37 @@ resource "aws_route_table" "rt" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.inetgw.id
   }
+  tags = { "Name" = "Route Table (Managed by Terraform)" }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/route_table_association
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/route_table_association
 resource "aws_route_table_association" "my_association" {
   subnet_id      = aws_subnet.subnet.id
   route_table_id = aws_route_table.rt.id
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/security_group
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/security_group
 resource "aws_security_group" "sg" {
+  vpc_id = aws_vpc.vpc.id
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  # Add other necessary inbound rules here
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = { "Name" = "Security Group (Managed by Terraform)" }
 }
 
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/security_group_rule
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/security_group_rule
 resource "aws_security_group_rule" "network" {
   for_each          = var.network_security_rules
   description       = each.value.description
@@ -85,48 +67,63 @@ resource "aws_security_group_rule" "network" {
   ipv6_cidr_blocks  = each.value.ipv6_cidr_blocks
   security_group_id = aws_security_group.sg.id
 }
-resource "aws_security_group_rule" "ssh-in" {
-  security_group_id = aws_security_group.sg.id
-  description       = "Allowed to SSH into server from same IP of machine that runs this script (Managed by Terraform)"
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = [join("/", [chomp(data.http.icanhazip.response_body), "32"])]
-  ipv6_cidr_blocks  = []
+
+# resource "aws_security_group_rule" "ssh-in" {
+#   security_group_id = aws_security_group.sg.id
+#   description       = "Allowed to SSH into server from same IP of machine that runs this script (Managed by Terraform)"
+#   type              = "ingress"
+#   from_port         = 22
+#   to_port           = 22
+#   protocol          = "tcp"
+#   cidr_blocks       = [join("/", [chomp(data.http.icanhazip.response_body), "32"])]
+#   ipv6_cidr_blocks  = []
+# }
+
+
+# # Resource to Create Key Pair
+# # https://cloudkatha.com/how-to-create-key-pair-in-aws-using-terraform-in-right-way/
+# resource "aws_key_pair" "generated_key" {
+#   key_name   = var.key_pair_name
+#   public_key = tls_private_key.demo_key.public_key_openssh
+#   # To use key you created using "ssh-keygen -t rsa -b 4096" on windows uncomment line below
+#   # public_key = file("demokey.pub")
+# }
+
+# # Resource to create a SSH private key
+# # https://registry.terraform.io/providers/hashicorp/tls/4.0.4/docs/resources/private_key
+# resource "tls_private_key" "demo_key" {
+#   algorithm = "RSA"
+#   rsa_bits  = 4096
+# }
+
+# # Save terraform key to your computer (Windows)
+# resource "local_file" "local_key_pair" {
+#   # Change name in variables.tf
+#   filename        = "${var.key_pair_name}.pem"
+#   file_permission = "0400"
+#   content         = tls_private_key.demo_key.private_key_pem
+# }
+resource "aws_key_pair" "existing" {
+  key_name   = "my-existing-key"
+  public_key = file("~/.ssh/awskey.pub")
 }
-
-
-# Resource to Create Key Pair
-# https://cloudkatha.com/how-to-create-key-pair-in-aws-using-terraform-in-right-way/
-resource "aws_key_pair" "generated_key" {
-  key_name   = var.key_pair_name
-  public_key = tls_private_key.demo_key.public_key_openssh
-  # To use key you created using "ssh-keygen -t rsa -b 4096" on windows uncomment line below
-  # public_key = file("demokey.pub")
-}
-
-# Resource to create a SSH private key
-# https://registry.terraform.io/providers/hashicorp/tls/4.0.4/docs/resources/private_key
-resource "tls_private_key" "demo_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-# Save terraform key to your computer (Windows)
-resource "local_file" "local_key_pair" {
-  # Change name in variables.tf
-  filename        = "${var.key_pair_name}.pem"
-  file_permission = "0400"
-  content         = tls_private_key.demo_key.private_key_pem
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/5.6.2/docs/resources/instance
+# https://registry.terraform.io/providers/hashicorp/aws/5.7.0/docs/resources/instance
 resource "aws_instance" "ubuntu-server-lts" {
   ami           = data.aws_ami.ubuntu-jammy-lts.id
   instance_type = var.vm_size
-  # To use generated key for testing uncomment line below and comment out "aws-ubuntu-ssh-key"
-  key_name = aws_key_pair.generated_key.key_name
+  # To use generated key for testing uncomment line below and comment out line "file("~/.ssh/awskey.pub")"
+  # key_name = aws_key_pair.generated_key.key_name
+  key_name                    = aws_key_pair.existing.key_name
+  associate_public_ip_address = true
+  subnet_id                   = aws_subnet.subnet.id
+  vpc_security_group_ids = [aws_security_group.sg.id]
+
+  # Specify root device type & size in GB
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = "8"
+    delete_on_termination = true
+  }
   tags = {
     "Name" = "Ubuntu Server 22.04 LTS (managed by terraform)"
   }

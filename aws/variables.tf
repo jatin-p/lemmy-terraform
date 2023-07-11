@@ -64,20 +64,20 @@ variable "network_security_rules" {
       to_port          = 443
       self             = false
     },
-    "outbound" = {
-      description = "outbound all"
-      type        = "egress"
-      protocol    = "-1"
-      cidr_blocks = [
-        "0.0.0.0/0",
-      ]
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      from_port        = 0
-      to_port          = 0
-      self             = false
-    },
+    # "outbound" = {
+    #   description = "outbound all"
+    #   type        = "egress"
+    #   protocol    = "-1"
+    #   cidr_blocks = [
+    #     "0.0.0.0/0",
+    #   ]
+    #   ipv6_cidr_blocks = []
+    #   prefix_list_ids  = []
+    #   security_groups  = []
+    #   from_port        = 0
+    #   to_port          = 0
+    #   self             = false
+    # },
   }
 }
 
